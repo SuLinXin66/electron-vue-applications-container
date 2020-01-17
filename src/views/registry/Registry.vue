@@ -5,8 +5,8 @@
         <FormItem key="registryUserName" prop="userName">
           <Input v-model="userInfo.userName" prefix="ios-contact" placeholder="请输入用户名" style="width: 100%"/>
         </FormItem>
-        <FormItem key="registryIdCard" prop="idCard">
-          <Input v-model="userInfo.idCard" prefix="md-finger-print" placeholder="请输入身份证号码"
+        <FormItem key="registryIdCode" prop="idCode">
+          <Input v-model="userInfo.idCode" prefix="md-finger-print" placeholder="请输入身份证号码"
                  style="width: 100%"/>
         </FormItem>
         <FormItem key="registryBtns">
@@ -39,14 +39,14 @@
 
     private userInfo: UserInfo = {
       userName: "",
-      idCard: ""
+      idCode: ""
     } as UserInfo;
 
     private rules: any = {
       userName: [
         {required: true, message: "用户名不能为空", trigger: 'change'}
       ],
-      idCard: [
+      idCode: [
         {required: true, message: "身份证号码不能为空", trigger: 'change'},
         {pattern: /^[0-9]{17}([0-9]|x|X)$/, message: "身份证号码必须为18位且只能为数字或x"}
       ]
@@ -63,7 +63,7 @@
         // }
 
         const userName = this.userInfo.userName;
-        const idCode = this.userInfo.idCard;
+        const idCode = this.userInfo.idCode;
         try {
           await sendAjax(registry(this.urlPrefix, {
             userName,
@@ -72,17 +72,16 @@
 
           (Modal as any).success({
             title: "注册成功",
-            content: "注册成功, 初始密码: 12345678, 请使用 用户名+密码 登录门户系统"
+            content: "注册成功, 初始密码: 123456789, 请使用 用户名+密码 登录门户系统"
           });
 
           this.userInfo = {
             userName: "",
-            idCard: "",
+            idCode: "",
             password: ""
-          }
+          } as any
 
         } catch (e) {
-
           let content = "服务器异常,请稍后再试!";
           let title = "服务器异常";
           if (e.data && e.data.msg) {

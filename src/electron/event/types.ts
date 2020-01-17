@@ -1,5 +1,5 @@
 import Nedb from "nedb";
-import {DbSystem, DbUserLocal} from "@/types";
+import {DbSystem, DbUserLocal, EventReturn, UserInfo} from "@/types";
 
 export interface SystemDbEventParams {
   db: Nedb<DbSystem>
@@ -7,6 +7,7 @@ export interface SystemDbEventParams {
 
 export interface UserLocalDbEventParams {
   db: Nedb<DbUserLocal>
+  startLoadApp: (err: Error | undefined, user: UserInfo) => void
 }
 
 export interface AllEventParams {

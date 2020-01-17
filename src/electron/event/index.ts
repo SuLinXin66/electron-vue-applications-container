@@ -1,6 +1,14 @@
 import {ipcMain} from "electron"
+import {Base64} from "js-base64"
 import {AllEventParams, SystemDbEventParams, UserLocalDbEventParams} from "@/electron/event/types";
-import {DbParams, DbSystem, EventReturn, SystemEventNames, UserLocalEventNames} from "@/types";
+import {
+  DbParams,
+  DbSystem,
+  EventReturn,
+  SystemEventNames,
+  UserInfo,
+  UserLocalEventNames
+} from "@/types";
 
 const createError: (err: Error) => EventReturn<void> = err => ({
   error: true,
@@ -47,6 +55,31 @@ export const loadSystemDbEvent: (systemDbEvent: SystemDbEventParams) => void = s
       }
       event.returnValue = createSuccess(undefined, numberOfUpdated, upsert);
     })
+  });
+
+  ipcMain.on(SystemEventNames.saveComponent, (event, args: DbSystem) => {
+    systemDbEvent.db.findOne<DbSystem>({url: args.url}, (err, documents) => {
+      if (err) {
+        event.returnValue = createError(err);
+        return
+      }
+
+      if (!documents || documents.localType != args.localType) {
+        systemDbEvent.db.insert({
+          localType: args.localType,
+          url: args.url,
+          desc: args.desc
+        }, (err1, document) => {
+          if (err1) {
+            event.returnValue = createError(err);
+            return
+          }
+          event.returnValue = createSuccess(document)
+        });
+        return;
+      }
+      event.returnValue = createSuccess("is Have")
+    })
   })
 };
 
@@ -68,6 +101,21 @@ export const loadUserLocalDbEvent: (userLocalDbEvent: UserLocalDbEventParams) =>
         return
       }
       event.returnValue = createSuccess(undefined, numberOfUpdated, upsert);
+    })
+  });
+
+  ipcMain.on(UserLocalEventNames.loginOk, (event, args: UserInfo) => {
+    const val = Base64.encode(JSON.stringify(args));
+    userLocalDbEvent.db.update({key: "userInfo"}, {
+      key: "userInfo",
+      val
+    }, {upsert: true}, async (err, numberOfUpdated, upsert) => {
+      if (err) {
+        await userLocalDbEvent.startLoadApp(err, undefined as any);
+        return
+      }
+
+      await userLocalDbEvent.startLoadApp(undefined, args);
     })
   })
 };

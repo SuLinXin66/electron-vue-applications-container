@@ -18,3 +18,14 @@ export const queryComponents: (urlPrefix: string) => AjaxRequest = (urlPrefix) =
   url: `//${urlPrefix}/component/queryAll`,
   method: "get"
 });
+
+export const ping: (urlPrefix: string) => AjaxRequest = urlPrefix => ({
+  url: `//${urlPrefix}/ping`,
+  method: "post"
+});
+
+export const updateUserPwd: (urlPrefix: string, data: { userName: string, oldPwd: string, newPwd: string }) => AjaxRequest = (urlPrefix, data) => ({
+  url: `//${urlPrefix}/user/update/pwd `,
+  method: "post",
+  data
+});

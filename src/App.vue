@@ -76,6 +76,10 @@
       userLocalId: ''
     };
 
+    private created(){
+      this.loadUserLocalSetting()
+    }
+
     private mousedown(e: any) {
       const remote = this.electronRemote;
       const currWindowPosition = remote.getCurrentWindow().getPosition();
@@ -110,9 +114,6 @@
       this.electronRemote.app.quit()
     }
 
-    private created() {
-      this.loadUserLocalSetting(true);
-    }
 
     private toShowModal() {
       this.loadUserLocalSetting();
@@ -121,6 +122,7 @@
 
     private loadUserLocalSetting(isCreated?: any){
       const data: EventReturn<DbSystem> = this.electronIpcRenderer.sendSync(SystemEventNames.findOne, {localType: "mainSystemUrl"} as DbSystem);
+
       const userLocalData: EventReturn<DbUserLocal> = this.electronIpcRenderer.sendSync(UserLocalEventNames.findOne, {key: "autoload"});
       if (data.error || userLocalData.error) {
 
@@ -225,7 +227,7 @@
     left: 0;
     right: 0;
     cursor: move;
-    z-index: 12;
+    z-index: 1011;
 
     i {
       width: 38px;
