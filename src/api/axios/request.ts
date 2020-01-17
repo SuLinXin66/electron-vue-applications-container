@@ -49,7 +49,6 @@ axios.interceptors.response.use(response => {
   (Message as any).destroy();
   return responseHandler(response);
 }, (error: any) => {
-  debugger;
   (Message as any).destroy();
   (Message as any).error("获取服务器响应失败!");
   return Promise.reject(error)

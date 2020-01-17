@@ -7,12 +7,13 @@ import ElectronMatch from "@/electron/index"
 import {initWebSocket} from "@/websocket";
 import {ipcRenderer} from "electron"
 
-
 declare global {
+
   interface window {
     require: (str: string) => any,
   }
 }
+
 
 import Remote = Electron.Remote;
 import IpcRenderer = Electron.IpcRenderer;

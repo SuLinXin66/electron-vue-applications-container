@@ -1,6 +1,7 @@
 import {DbSystem, EventReturn, RemoteEventNames, UserInfo} from "@/types";
 import {BrowserWindow, ipcMain} from "electron"
 import Nedb from "nedb";
+import {loadTray} from "@/electron/trays";
 
 let mainWindow: BrowserWindow;
 
@@ -30,10 +31,14 @@ export const startApp: (err: Error | undefined, user: UserInfo, loginWin: Browse
     });
   });
 
-  ipcMain.once('initWebsocketAfter', (event, args) => {
+  ipcMain.once('initWebsocketAfter', async (event, args) => {
     if (args) {
-      loginWin.close();
-      loginWin = null as any;
+      const isLoadOk = await loadTray(user, loginWin, systemUrlDb);
+      if (isLoadOk) {
+        loginWin.close();
+        loginWin = null as any;
+      }
+
       return
     }
 
@@ -72,6 +77,6 @@ export const startApp: (err: Error | undefined, user: UserInfo, loginWin: Browse
   }
 
   mainWindow.on("ready-to-show", () => {
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
   })
 };

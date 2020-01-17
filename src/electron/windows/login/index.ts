@@ -1,7 +1,7 @@
 import {BrowserWindow} from "electron";
 
 let win: BrowserWindow | null = null;
-export const mainWin: (url: string) => Promise<BrowserWindow> = (url) => {
+export const mainWin: (url: string) => Promise<BrowserWindow> = async (url) => {
   if (win == null) {
     win = new BrowserWindow({
       webPreferences: {

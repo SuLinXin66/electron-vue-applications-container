@@ -25,7 +25,7 @@ export interface DbParams {
 }
 
 export interface DbSystem {
-  localType: 'mainSystemUrl' | 'socketUrl' | 'chatMain' | 'chatMessage' | 'chatHistory' | 'appsUrl'
+  localType: 'mainSystemUrl' | 'socketUrl' | 'chatMain' | 'chatMessage' | 'chatHistory' | 'appsUrl' | 'floatTray'
   desc: string
   url: string
   _id?: string
@@ -64,5 +64,7 @@ export const UserLocalEventNames = {
 
 const remoteEventNamesPrefix = "remote-event-names-";
 export const RemoteEventNames = {
-  loginLoading: remoteEventNamesPrefix + "loginLoading"
+  loginLoading: remoteEventNamesPrefix + "loginLoading",
+  floatTrayLoading: remoteEventNamesPrefix + "floatTrayLoading",
+  chatMainLoading: remoteEventNamesPrefix + "chatMainLoading"
 };

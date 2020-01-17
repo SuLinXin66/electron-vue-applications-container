@@ -58,28 +58,39 @@ export const loadSystemDbEvent: (systemDbEvent: SystemDbEventParams) => void = s
   });
 
   ipcMain.on(SystemEventNames.saveComponent, (event, args: DbSystem) => {
-    systemDbEvent.db.findOne<DbSystem>({url: args.url}, (err, documents) => {
+    systemDbEvent.db.update({localType: args.localType} as DbSystem, {
+      localType: args.localType,
+      url: args.url,
+      desc: args.desc
+    } as DbSystem, {upsert: true}, (err, numberOfUpdated, upsert) => {
       if (err) {
         event.returnValue = createError(err);
         return
       }
-
-      if (!documents || documents.localType != args.localType) {
-        systemDbEvent.db.insert({
-          localType: args.localType,
-          url: args.url,
-          desc: args.desc
-        }, (err1, document) => {
-          if (err1) {
-            event.returnValue = createError(err);
-            return
-          }
-          event.returnValue = createSuccess(document)
-        });
-        return;
-      }
-      event.returnValue = createSuccess("is Have")
-    })
+      event.returnValue = createSuccess(undefined, numberOfUpdated, upsert);
+    });
+    // systemDbEvent.db.findOne<DbSystem>({url: args.url}, (err, documents) => {
+    //   if (err) {
+    //     event.returnValue = createError(err);
+    //     return
+    //   }
+    //
+    //   if (!documents || documents.localType != args.localType) {
+    //     systemDbEvent.db.insert({
+    //       localType: args.localType,
+    //       url: args.url,
+    //       desc: args.desc
+    //     }, (err1, document) => {
+    //       if (err1) {
+    //         event.returnValue = createError(err);
+    //         return
+    //       }
+    //       event.returnValue = createSuccess(document)
+    //     });
+    //     return;
+    //   }
+    //   event.returnValue = createSuccess("is Have")
+    // })
   })
 };
 

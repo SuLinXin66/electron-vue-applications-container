@@ -237,17 +237,42 @@
         return;
       }
 
-      let checkSuccess = [];
+      // let checkSuccess = [];
+      let loadServe: any = {
+        socketUrl: {
+          desc: "消息服务",
+          required: true
+        },
+        chatMain: {
+          desc: "通信主题",
+          required: true
+        },
+        chatMessage: {
+          desc: "通信消息",
+          required: true
+        },
+        chatHistory: {
+          desc: "通信历史",
+          required: true
+        },
+        appsUrl: {
+          desc: "应用列表",
+          required: true
+        },
+        floatTray: {
+          desc: "悬浮托盘服务",
+          required: false
+        },
+        length: 6
+      };
       for (let componentVo of result) {
-        if (componentVo.name != "socketUrl"
-          && componentVo.name != "chatMain"
-          && componentVo.name != "chatMessage"
-          && componentVo.name != "chatHistory"
-          && componentVo.name != "appsUrl") {
+        const currCheckComponent = loadServe[componentVo.name];
+        if (!currCheckComponent) {
           continue;
         }
         let successNum = 0;
-        if (!componentVo.Urls || !componentVo.Urls.length || componentVo.Urls.length == 0) {
+        if ((!componentVo.Urls || !componentVo.Urls.length || componentVo.Urls.length == 0) && currCheckComponent.required) {
+          console.log(componentVo);
           (Notice as any).error({
             duration: 0,
             desc: `组件 => ${componentVo.title}, 获取失败, 请联系总控系统管理员，检查现在组件的状态!`,
@@ -268,7 +293,7 @@
                 desc: componentVo.title,
                 localType: componentVo.name
               } as DbSystem);
-              if (dbRes.error) {
+              if (dbRes.error && currCheckComponent.required) {
                 (Notice as any).error({
                   duration: 0,
                   desc: `保存组件错误 => ${dbRes.result}`,
@@ -293,12 +318,11 @@
           this.showLoading = false;
           return;
         }
-        checkSuccess.push({
-          name: componentVo.name,
-          title: componentVo.title
-        })
+        delete loadServe[componentVo.name];
+        loadServe.length -= 1;
       }
 
+      console.log(loadServe);
 
       // if (checkSuccess.length != 5) {
       //   (Notice as any).error({
@@ -333,15 +357,16 @@
     }
 
     private loginLoading(event: any, args: EventReturn<string>) {
+      console.log(args)
       if (args.error) {
         (Modal as any).error({
           title: "错误提醒",
           content: `组件加载失败 ==> ${args.err!.message}`
         });
+        this.loadingText = "";
+        this.showLoading = false;
         return
       }
-      this.loadingText = "";
-      this.showLoading = false;
       this.loadingText = args.result as string
     }
 

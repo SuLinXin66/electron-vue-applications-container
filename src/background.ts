@@ -11,7 +11,7 @@ import {systemDb, userLocalDb} from "@/electron/db"
 import {loadAllEvent} from "@/electron/event"
 import {startApp} from "@/electron/start";
 
-const isDevelopment = process.env.NODE_ENV !== 'production'
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -28,7 +28,7 @@ async function createWindow() {
     // Load the url of the dev server if in development mode
     win = await mainWin(process.env.WEBPACK_DEV_SERVER_URL);
     // win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    // if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app');
     win = await mainWin('app://./index.html');
