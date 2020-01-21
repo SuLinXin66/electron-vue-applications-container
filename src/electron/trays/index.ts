@@ -246,9 +246,24 @@ const loadChatMain: (systemUrlDb: Nedb<DbSystem>) => Promise<EventReturn<boolean
           show: false
         });
 
-
+        chatMainWin.webContents.openDevTools();
         chatMainWin.setSkipTaskbar(true);
         const chatMainLoading: (event: IpcMainEvent, args: any) => void = (event, args) => {
+          if (args) {
+            resolve({
+              error: true,
+              err: {
+                message: "通信主窗体  => " + args
+              }
+            } as EventReturn<boolean>);
+            try {
+              chatMainWin!.close();
+            } catch (e) {
+
+            }
+            chatMainWin = undefined;
+            return
+          }
           addMessagePush(chatMainWin as BrowserWindow);
           resolve({
             error: false
@@ -351,6 +366,7 @@ const loadFloatTray: (systemUrlDb: Nedb<DbSystem>) => Promise<EventReturn<boolea
           width: 64, height: 64, resizable: false, show: false, alwaysOnTop: true, frame: false
         });
 
+        floatTrayWin.setSkipTaskbar(true);
         const floatTrayLoadingEvent: (event: IpcMainEvent, args: any) => void = (event, args) => {
           event.returnValue = testIcon;
           resolve({
@@ -425,6 +441,24 @@ export const loadTray: (userInfo: UserInfo, loginWin: BrowserWindow, systemUrlDb
   }
 
   if (!res) {
+
+    try {
+      if (chatMainWin) {
+        chatMainWin.close()
+      }
+    } catch (e) {
+    }
+
+    try {
+      if (floatTrayWin) {
+        floatTrayWin.close();
+      }
+    } catch (e) {
+
+    }
+    chatMainWin = undefined;
+    floatTrayWin = undefined;
+
     return res;
   }
 

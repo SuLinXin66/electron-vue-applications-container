@@ -3,7 +3,7 @@ import {Base64} from "js-base64"
 import {AllEventParams, SystemDbEventParams, UserLocalDbEventParams} from "@/electron/event/types";
 import {
   DbParams,
-  DbSystem,
+  DbSystem, DbUserLocal,
   EventReturn,
   SystemEventNames,
   UserInfo,
@@ -128,7 +128,26 @@ export const loadUserLocalDbEvent: (userLocalDbEvent: UserLocalDbEventParams) =>
 
       await userLocalDbEvent.startLoadApp(undefined, args);
     })
+  });
+
+  ipcMain.on(UserLocalEventNames.queryUserInfo, (event, args) => {
+    userLocalDbEvent.db.findOne<DbUserLocal>({key: "userInfo"}, (err, document) => {
+      if (err) {
+        event.returnValue = createError(err);
+        return
+      }
+      if (!document) {
+        event.returnValue = createError({
+          message: "未找到用户数据"
+        } as any);
+        return;
+      }
+      const jsonData = Base64.decode(document.val as string);
+      const userInfo = JSON.parse(jsonData);
+      event.returnValue = createSuccess(userInfo);
+    })
   })
+
 };
 
 export const loadAllEvent: (allEventParams: AllEventParams) => void = (allEventParams) => {

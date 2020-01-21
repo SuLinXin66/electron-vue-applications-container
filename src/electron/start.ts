@@ -1,11 +1,11 @@
 import {DbSystem, EventReturn, RemoteEventNames, UserInfo} from "@/types";
-import {BrowserWindow, ipcMain} from "electron"
+import {BrowserWindow, ipcMain, dialog} from "electron"
 import Nedb from "nedb";
 import {loadTray} from "@/electron/trays";
 
 let mainWindow: BrowserWindow;
 
-export const startApp: (err: Error | undefined, user: UserInfo, loginWin: BrowserWindow, systemUrlDb: Nedb<DbSystem>) => void = (err, user, loginWin, systemUrlDb) => {
+export const startApp: (err: Error | undefined, user: UserInfo, loginWin: BrowserWindow, systemUrlDb: Nedb<DbSystem>) => void = async (err, user, loginWin, systemUrlDb) => {
   if (err) {
     loginWin.webContents.send(RemoteEventNames.loginLoading, {
       error: true,
@@ -69,14 +69,25 @@ export const startApp: (err: Error | undefined, user: UserInfo, loginWin: Browse
     show: false
   });
 
-  const params = "?main";
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + params)
-  } else {
-    mainWindow.loadURL('app://./index.html' + params)
+  try {
+    const params = "?main";
+    if (process.env.WEBPACK_DEV_SERVER_URL) {
+      await mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + params)
+    } else {
+      await mainWindow.loadURL('app://./index.html' + params)
+    }
+  } catch (e) {
+    dialog.showMessageBoxSync({
+      message: "初始化应用主体失败, 应用将强制性退出, 请您稍后重新尝试, 如长时间如此, 请联系管理员!",
+      title: "错误提醒",
+      type: 'error',
+      buttons: ["确定"],
+      defaultId: 0
+    })
   }
 
-  mainWindow.on("ready-to-show", () => {
-    // mainWindow.webContents.openDevTools();
-  })
+
+  // mainWindow.on("ready-to-show", () => {
+  //   // mainWindow.webContents.openDevTools();
+  // })
 };
