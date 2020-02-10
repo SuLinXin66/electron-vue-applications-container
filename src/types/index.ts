@@ -69,3 +69,8 @@ export const RemoteEventNames = {
   floatTrayLoading: remoteEventNamesPrefix + "floatTrayLoading",
   chatMainLoading: remoteEventNamesPrefix + "chatMainLoading"
 };
+
+const websocketEventNamesPrefix = "websocket-event-names-";
+export const WebSocketEventNames = {
+  sendMessage: websocketEventNamesPrefix + "sendMessage",
+};

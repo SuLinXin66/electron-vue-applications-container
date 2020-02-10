@@ -27,7 +27,7 @@ export const startApp: (err: Error | undefined, user: UserInfo, loginWin: Browse
         error: false,
         result: "初始化消息总线..."
       } as EventReturn<string>);
-      mainWindow.webContents.send("initWebSocket", document.url);
+      mainWindow.webContents.send("initWebSocket", document.url + "|||" + JSON.stringify(user));
     });
   });
 
@@ -68,6 +68,8 @@ export const startApp: (err: Error | undefined, user: UserInfo, loginWin: Browse
     transparent: false,
     show: false
   });
+
+  mainWindow.webContents.openDevTools();
 
   try {
     const params = "?main";

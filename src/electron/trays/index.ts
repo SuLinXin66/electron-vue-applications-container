@@ -378,7 +378,7 @@ const loadFloatTray: (systemUrlDb: Nedb<DbSystem>) => Promise<EventReturn<boolea
         ipcMain.once(RemoteEventNames.floatTrayLoading, floatTrayLoadingEvent);
 
         try {
-          await floatTrayWin.loadURL("http://192.168.100.20:6061");
+          await floatTrayWin.loadURL("http://127.0.0.1:6061");
         } catch (e) {
           ipcMain.removeListener(RemoteEventNames.floatTrayLoading, floatTrayLoadingEvent);
           floatTrayWin.close();
@@ -437,7 +437,8 @@ export const loadTray: (userInfo: UserInfo, loginWin: BrowserWindow, systemUrlDb
   if (platform == "linux") {
     res = await loadLinuxTray(loginWin, systemUrlDb);
   } else {
-    res = await loadWinTray(loginWin, systemUrlDb);
+    // res = await loadWinTray(loginWin, systemUrlDb);
+    res = await loadLinuxTray(loginWin, systemUrlDb);
   }
 
   if (!res) {

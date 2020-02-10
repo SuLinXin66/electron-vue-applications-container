@@ -7,8 +7,9 @@ import {
   EventReturn,
   SystemEventNames,
   UserInfo,
-  UserLocalEventNames
+  UserLocalEventNames, WebSocketEventNames
 } from "@/types";
+import BrowserWindow = Electron.BrowserWindow;
 
 const createError: (err: Error) => EventReturn<void> = err => ({
   error: true,
@@ -150,7 +151,18 @@ export const loadUserLocalDbEvent: (userLocalDbEvent: UserLocalDbEventParams) =>
 
 };
 
+export const loadWebSocketEvent: () => void = () => {
+  ipcMain.on(WebSocketEventNames.sendMessage, (event, args) => {
+    const allRecevice: Array<BrowserWindow> = (global as any).allRecevice;
+    if (allRecevice && allRecevice.length && allRecevice.length > 0) {
+      allRecevice.forEach(value => value.webContents.send(args))
+    }
+  })
+};
+
 export const loadAllEvent: (allEventParams: AllEventParams) => void = (allEventParams) => {
   loadSystemDbEvent(allEventParams.systemDbEventParams);
   loadUserLocalDbEvent(allEventParams.userLocalDbEventParams);
+  loadWebSocketEvent();
 };
+
