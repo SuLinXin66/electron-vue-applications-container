@@ -1,13 +1,13 @@
-import {ipcRenderer} from "electron"
-import {UserInfo} from "@/types";
+import { ipcRenderer } from "electron";
+import { UserInfo } from "@/types";
 
 let webSocket;
 
-const tryErrCallBack: (func: Function)=>void = (func)=>{
+const tryErrCallBack: (func: Function) => void = func => {
   try {
-    func()
+    func();
   } catch (e) {
-    ipcRenderer.send('initWebsocketAfter', false);
+    ipcRenderer.send("initWebsocketAfter", false);
   }
 };
 
@@ -19,17 +19,17 @@ export const initWebSocket: (arg: string) => void = arg => {
     userInfo = JSON.parse(userInfo as any);
     let initSocket = true;
     if (url.startsWith("http://")) {
-      url = "ws://" + url.substring("http://".length)
+      url = "ws://" + url.substring("http://".length);
     } else if (url.startsWith("https://")) {
-      url = "ws://" + url.substring("https://".length)
+      url = "ws://" + url.substring("https://".length);
     } else if (!url.startsWith("ws://")) {
       url = "ws://" + url;
     }
 
     if (url.endsWith("/")) {
-      url += "ws"
+      url += "ws";
     } else {
-      url += "/ws"
+      url += "/ws";
     }
 
     url += `?idCode=` + userInfo.idCode;
@@ -44,11 +44,11 @@ export const initWebSocket: (arg: string) => void = arg => {
       // }
     };
 
-    webSocket.onerror = (e) => {
+    webSocket.onerror = e => {
       if (initSocket) {
         initSocket = false;
-        ipcRenderer.send('initWebsocketAfter', false);
-        return
+        ipcRenderer.send("initWebsocketAfter", false);
+        return;
       }
     };
 
@@ -60,13 +60,13 @@ export const initWebSocket: (arg: string) => void = arg => {
       const dataStr = ev.data;
       if (initSocket) {
         const jsonData = JSON.parse(dataStr);
-        ipcRenderer.send('initWebsocketAfter', !jsonData.error);
+        ipcRenderer.send("initWebsocketAfter", !jsonData.error);
       }
       console.log(ev);
       ipcRenderer.send(ev.data);
     };
   } catch (e) {
-    ipcRenderer.send('initWebsocketAfter', false);
-    return true
+    ipcRenderer.send("initWebsocketAfter", false);
+    return true;
   }
 };
