@@ -1,8 +1,6 @@
 import { ipcRenderer } from "electron";
 import { UserInfo } from "@/types";
 
-console.log("测试提交");
-
 let webSocket;
 
 const tryErrCallBack: (func: Function) => void = func => {
